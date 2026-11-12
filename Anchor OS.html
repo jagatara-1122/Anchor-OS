@@ -30,11 +30,13 @@
 				flex: 1;
 				outline: none;
 				color: #00ffff;
-				margin: 1.5px;
+				margin: 1.6px;
 			}
 			.line {
+				position: relative;
 				display: flex;
 				align-items: center;
+				top: -5px;
 			}
 			#endCommand {
 				white-space: pre-wrap;
@@ -51,7 +53,7 @@
 		</div>
 		<script>
 			//HTML connect(???)
-			const history = document.querySelector("#endCommand");
+			const commandHistory = document.querySelector("#endCommand");
 			const input = document.querySelector("#in");
 			const stand = document.querySelector(".stand");
 			//now times
@@ -86,7 +88,7 @@
 			//log generate
 			const log = (log)=> {
 				const height = document.body.scrollHeight;
-				history.textContent += log + "\n";
+				commandHistory.textContent += log + "\n";
 				window.scrollBy(0, document.body.scrollHeight - height);
 				return;
 			};
@@ -138,7 +140,7 @@
 						this.datas.data.splice(index,1);
 						this.datas.name.splice(index,1);
 					}
-					return;
+					return index != -1;
 				}
 				dget(name){
 					const index = this.iget(name);
@@ -169,8 +171,25 @@
 			//oh.. not completed
 			class AnchorAccountSystem {
 				constructor(accounts){
-						this.account = accounts;
-					return;
+						if(accounts == undefined){
+							this.account = new Darray();
+							this.add("guest", "", "visitor");
+						}else{
+							this.account = accounts;
+						}
+				}
+				add(accountName, accountPassword, accountAuth){
+					return this.account.add(accountName, new Account(accountName, accountPassword, accountAuth));
+				}
+				del(name){
+					return this.account.del(name);
+				}
+				isCorrect(name){
+					const nam = this.account.dget(name);
+					return (!nam.notFound) && (nam.data.name === name);
+				}
+				dget(name){
+					return this.account.dget(name);
 				}
 			}
 			//test log
