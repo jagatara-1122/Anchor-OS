@@ -173,10 +173,11 @@
 				constructor(accounts){
 						if(accounts == undefined){
 							this.account = new Darray();
-							this.add("guest", "", "visitor");
-						}else{
-							this.account = accounts;
-						}
+						this.add("guest", "", "visitor");
+					}else{
+						this.account = accounts;
+					}
+					
 				}
 				add(accountName, accountPassword, accountAuth){
 					return this.account.add(accountName, new Account(accountName, accountPassword, accountAuth));
@@ -186,7 +187,7 @@
 				}
 				isCorrect(name){
 					const nam = this.account.dget(name);
-					return (!nam.notFound) && (nam.data.name === name);
+					return (nam.data instanceof Account) && (!nam.notFound) && (nam.data.name === name);
 				}
 				dget(name){
 					return this.account.dget(name);
