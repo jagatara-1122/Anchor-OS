@@ -1,3 +1,4 @@
+Anchor OS: WIP
 <!DOCTYPE html>
 <html>
 	<head>
@@ -30,13 +31,17 @@
 				flex: 1;
 				outline: none;
 				color: #00ffff;
-				margin: 1.6px;
+				margin: -2px;
+				margin-left: 1.6px;
+				min-height: 1.5em;
+				field-sizing: content;
+				overflow-y: hidden;
 			}
 			.line {
 				position: relative;
 				display: flex;
-				align-items: center;
-				top: -5px;
+				align-items: flex-start;
+				top: -0.1px;
 			}
 			#endCommand {
 				white-space: pre-wrap;
@@ -47,8 +52,8 @@
 		<div class="cli">
 			<div id="endCommand"></div>
 			<div class="line">
-				<span class="stand">Anchor_OS:guest-></span>
-				<input type="text" id="in" autocomplete="off">
+				<span class="stand">Anchor OS: guest -></span>
+				<textarea id="in" autocomplete="off"></textarea>
 			</div>
 		</div>
 		<script>
@@ -56,6 +61,10 @@
 			const commandHistory = document.querySelector("#endCommand");
 			const input = document.querySelector("#in");
 			const stand = document.querySelector(".stand");
+			//get string byte length
+			const stringByte = (string)=> {
+				return (new Blob([string])).size;
+			};
 			//now times
 			const nowTime = ()=> {
 				const times = new Date();
@@ -94,7 +103,7 @@
 			};
 			//command execute
 			const commandExe = (cmd)=> {
-				//not written
+				log("Oh... Sorry I can't  run this command because the script isn't written yet :(");
 				return;
 			};
 			//init...?
@@ -103,10 +112,11 @@
 			};
 			//command call
 			input.addEventListener("keydown",(press)=> {
-					if(press.key === "Enter"){
-						const cmd = input.value.trim();
-						if(cmd === "") return;
-						log(`${document.querySelector(".stand").textContent} ${cmd}`);
+					if(press.key === "Enter" && !(press.shiftKey || press.repeat)){
+						press.preventDefault();
+						const cmd = input.value;
+						const D = stringByte(stand.textContent);
+						log(`${stand.textContent} ${cmd}`.replaceAll("\n","\n" + " ".repeat(D + 1)));
 						commandExe(cmd);
 						input.value = "";
 					}
@@ -151,13 +161,16 @@
 				}
 				repl(name,dat){ 
 					const index = this.iget(name);
-					if(index != -1){
-						this.datas.data[index] = dat;
-					}
+					if(index != -1) this.datas.data[index] = dat;
 					return index != -1;
 				}
 				iget(name){
 					return this.datas.name.indexOf(name);
+				}
+				renam(name, reNamed){
+					const index = this.iget(name);
+					const isC = ((index != -1) && (this.iget(reNamed) == -1));
+					if(isC) this.datas.name[index] = reNamed; 					return isC;
 				}
 			}
 			//account
@@ -191,6 +204,19 @@
 				}
 				dget(name){
 					return this.account.dget(name);
+				}
+				iget(name){
+					return this.account.iget(name);
+				}
+				renam(name, reNamed){
+					const index = this.account.iget(name);
+					const isC = ((index != -1) && (this.account.iget(reNamed) == -1));
+					const acc = this.account.datas;
+					if(isC){
+						acc.name[index] = reNamed;
+						acc.data[index].name = reNamed;
+					}
+					return isC;
 				}
 			}
 			//test log
